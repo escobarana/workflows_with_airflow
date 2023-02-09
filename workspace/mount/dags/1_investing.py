@@ -2,6 +2,7 @@ import datetime as dt
 
 import pandas as pd
 from airflow import DAG
+from airflow.operators.python_operator import PythonOperator
 
 """
 Exercise 1
@@ -19,7 +20,6 @@ dag = DAG(
     schedule_interval="@once",
     start_date=dt.datetime(2021, 1, 1),
 )
-
 
 def load_data():
     from io import BytesIO
@@ -43,14 +43,18 @@ def load_data():
 
 def run_analysis(df):
     # < Insert hard data science problem here >
-    import time
-
-    time.sleep(10)
     return df.count()
 
 
 def store_results(df):
     df.to_csv("./investment.csv")
+
+
+t1 = PythonOperator(
+    task_id = "load_data",
+    python_callable = load_data,
+    dag = dag
+)
 
 
 with dag:
