@@ -50,14 +50,15 @@ def store_results(df):
     df.to_csv("./investment.csv")
 
 
-t1 = PythonOperator(
-    task_id = "load_data",
-    python_callable = load_data,
-    dag = dag
-)
-
-
-with dag:
+def pipeline():
     df_investment = load_data()
     results = run_analysis(df_investment)
     store_results(results)
+
+
+with dag:
+    t1 = PythonOperator(
+        task_id = "analyze_investment_data",
+        python_callable = load_data,
+        dag = dag
+    )
