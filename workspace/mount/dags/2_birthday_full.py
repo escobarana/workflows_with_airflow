@@ -12,7 +12,7 @@ Extend your previous result to also print your age.
 
 
 MY_NAME = "Barack Obama"
-MY_BIRTHDAY = dt.datetime(year=1961, month=8, day=4, tz="Pacific/Honolulu")
+MY_BIRTHDAY = dt.datetime(year=1961, month=8, day=4)
 
 dag = DAG(
     dag_id="happy_birthday_v2",
@@ -22,12 +22,14 @@ dag = DAG(
     start_date=MY_BIRTHDAY,
 )
 
-
 def years_today():
     """Returns how old you are at this moment"""
-    date_today = dt.date.today()
-    date_diff = relativedelta.relativedelta(date_today, MY_BIRTHDAY.date)
-    return date_diff.years   # TODO: create a working implementation
+    return (
+        "{{ macros.dateutil.relativedelta.relativedelta("
+        "data_interval_end, "
+        "dag.start_date"
+        ").years }}"
+    )
 
 
 with dag:
